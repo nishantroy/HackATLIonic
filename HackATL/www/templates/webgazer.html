@@ -1,25 +1,21 @@
-<ion-view view-title="Eye Test" hide-back-button="true">
+<ion-view view-title="Diagnostic Eye Test" hide-back-button="true">
     <ion-nav-buttons side="right">
-        <a ui-sref="home">
-            <button class="button button-clear">
-                Home
-            </button>
-        </a>
+        <button class="button button-clear" ng-click="redirect()">
+            Home
+        </button>
     </ion-nav-buttons>
     <ion-content class="padding">
         <div class="row">
-
             <div class="col">
-                <h2>Diagnostic Eye-Test</h2>
                 <div class="col">
-                    <button class="button button-positive" ng-click="startWebgaze(); startSpin()">START</button>
-                    <div align="center" style="margin-top: 40%">
-                        <span us-spinner="{radius:200, width:8, length: 2, lines: 50,
-                        speed: .3, color: 'blue', opacity: 1/10, trail: 5, corners:100}"
-                              spinner-key="spinner-1">
-                        </span>
-
+                    <button class="button button-block button-positive" ng-click="diagnose()">
+                        Start Diagnosis
+                    </button>
+                    <div class="spinnerPos" us-spinner="{radius:{{spinnerRadius}}, width:8, length: 2, lines: 50, speed: .3,
+                         color: 'blue', opacity: 1/10, trail: 5, corners:100}"
+                         spinner-key="spinner-1" ng-style="margin">
                     </div>
+
                 </div>
             </div>
         </div>

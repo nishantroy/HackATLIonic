@@ -40,13 +40,6 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services', '
                 controller: 'HomeController'
             })
 
-            .state('diagnosis', {
-                name: 'Diagnosis Page',
-                url: '/diagnosis',
-                templateUrl: 'templates/diagnosis.html',
-                controller: 'DiagnosisController'
-            })
-
             .state('webgazer', {
                 name: 'Webgazer Page',
                 url: '/webgazer',

@@ -1,30 +1,24 @@
 angular.module('starter.controllers', [])
 
-    .controller('DiagnosisController', function ($scope, $http) {
-        // Diagnosis functionality
-    })
+    .controller('HomeController', function ($scope, $location) {
 
-
-    .controller('HomeController', function ($scope, $http) {
-
-        $scope.concussioned = function () {
-            swal({
-                title: "Congretz! u hv conkushen",
-                text: "u ded",
-                type: "info"
-            });
+        $scope.redirect = function () {
+            $location.path('/questions');
         }
     })
 
-    .controller('WebgazerController', function ($scope, usSpinnerService, $rootScope) {
-
-        $scope.countDown = function () {
-            $scope.ExperimentInProgress = true;
-            $scope.countdown = true;
-            $scope.seconds = 50000; //ms? ns?
-            $scope.startWebgaze();
-            $scope.startSpin();
+    .controller('WebgazerController', function ($scope, usSpinnerService, $rootScope, $location) {
+        $scope.redirect = function () {
+            $location.path('/home')
         };
+
+        if (!window.cordova) {
+            $scope.spinnerRadius = 200;
+            $scope.margin = {'margin-top': 20 + '%'};
+        } else {
+            $scope.spinnerRadius = 100;
+            $scope.margin = {'margin-top': 40 + '%'};
+        }
 
         $scope.startcounter = 0;
 
@@ -44,23 +38,57 @@ angular.module('starter.controllers', [])
                 usSpinnerService.stop('spinner-1');
             }
         };
+
         $scope.spinneractive = false;
+
         $rootScope.$on('us-spinner:spin', function (event, key) {
             $scope.spinneractive = true;
         });
 
-        $rootScope.$on('us-spinner:stop', function(event, key) {
+        $rootScope.$on('us-spinner:stop', function (event, key) {
             $scope.spinneractive = false;
         });
 
+        $scope.finishDiagnosis = function () {
+            webgazer.showPredictionPoints(false);
+            webgazer.end();
+            window.localStorage.clear();
+            $scope.stopSpin();
+            if (Math.random() > 0.5) {
+                swal({
+                    title: "No Concussion Detected",
+                    text: "Athlete is safe for physical activity",
+                    type: "success",
+                    closeOnConfirm: true
+                });
+            } else {
+                swal({
+                    title: "Concussion suspected!",
+                    text: "Athlete should not participate in physical activity until cleared by medical staff",
+                    type: "error",
+                    closeOnConfirm: true
+                });
+            }
+        };
+
+        $scope.diagnose = function () {
+            swal({
+                    title: "Diagnosis will begin",
+                    text: "Follow the illuminated dot with your eyes, without moving your head",
+                    closeOnConfirm: true
+                }
+                , function () {
+                    $scope.startWebgaze();
+                })
+        };
 
 
         $scope.startWebgaze = function () {
             console.log("Start");
-            var overallCount = 0;
             var averagex = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             var averagey = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             var count = 0;
+
             webgazer
                 .setGazeListener(function (prediction, elapsedTime) {
                     if (prediction) {
@@ -83,32 +111,25 @@ angular.module('starter.controllers', [])
                                 console.log("looked too far");
                             }
                             count = 0;
-                            overallCount++;
                         }
                     }
 
-                    if (overallCount == 4) {
-                        swal({
-                                title: "No Concussion Detected",
-                                text: "Athlete is safe for physical activity",
-                                type: "info"
-                                //closeOnConfirm: false
-                            },
-                            function () {
-                                webgazer.end();
-                                $scope.stopSpin();
-                            });
-                    }
+
                 })
                 .begin()
                 .setTracker("clmtrackr")
-                .setRegression("ridge")
-                .showPredictionPoints(true);
+                .setRegression("ridge");
+            // .showPredictionPoints(true);
+            $scope.startSpin();
+            setTimeout($scope.finishDiagnosis, 5000);
         }
     })
 
 
-    .controller('QuestionsController', function ($scope, $http) {
+    .controller('QuestionsController', function ($scope, $location) {
+        $scope.redirect = function () {
+            $location.path('/webgazer');
+        };
         //quiz thing
         $scope.startQuiz = function () {
             $scope.inProgress = true;

@@ -5,34 +5,33 @@
     <!--<div class="row text-center margin-top">-->
     <ion-content class="padding">
         <div ng-show="!inProgress">
-            <h2>A few questions...</h2>
-            <button class="button button-positive" ng-click="startQuiz()">Start Quiz</button>
+            <h2 align="center">A few questions...</h2>
+            <button class="button button-block  button-positive" ng-click="startQuiz()">Start Quiz</button>
         </div>
         <div ng-show="inProgress">
             <div ng-show="!quizOver">
-                <h4 id="question">{{question}}</h4>
-
-
-                <div ng-repeat="option in options">
-                    <div class="radioWrapper">
-                        <input type="radio" id="{{option}}" name="answer" ng-model="$parent.chosenAnswer"
-                               ng-value="option" class="customRadio">
-                        <label for="{{option}}" class="customRadio">{{option}}</label>
-                    </div>
-                </div>
-
-                <button class="button button-balanced" ng-click="checkAnswer(chosenAnswer)">Submit</button>
+                <h4 align="center" id="question">{{question}}</h4>
+                <ion-list>
+                    <ion-radio ng-repeat="option in options" ng-model="$parent.chosenAnswer" id="{{option}}"
+                               name="answer"
+                               ng-value="option">
+                        {{option}}
+                    </ion-radio>
+                </ion-list>
+                <button class="button button-block button-positive"
+                        ng-click="checkAnswer(chosenAnswer)">Submit
+                </button>
             </div>
 
             <div ng-show="quizOver">
-                <h4>{{result}}</h4>
-                <h5>Please hold device one foot from face</h5>
-                <img src="./img/instructionpic.jpg"><br>
-                <a ui-sref="webgazer">
-                    <button class="button button-positive">
-                        Take the eye test.
-                    </button>
-                </a>
+                <h4 align="center">{{result}}</h4>
+                <h5 align="center">Please hold device one foot from face</h5>
+                <div align="center">
+                    <img src="./img/instructionpic.jpg"><br>
+                </div>
+                <button class="button button-block button-positive" ng-click="redirect()">
+                    Take the eye test.
+                </button>
             </div>
         </div>
     </ion-content>

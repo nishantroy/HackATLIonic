@@ -4,6 +4,7 @@ angular.module('starter.controllers', [])
         // Diagnosis functionality
     })
 
+
     .controller('HomeController', function ($scope, $http) {
 
         $scope.concussioned = function () {
@@ -16,16 +17,30 @@ angular.module('starter.controllers', [])
     })
 
     .controller('WebgazerController', function ($scope, usSpinnerService, $rootScope) {
+
+        $scope.countDown = function () {
+            $scope.ExperimentInProgress = true;
+            $scope.countdown = true;
+            $scope.seconds = 50000; //ms? ns?
+            $scope.startWebgaze();
+            $scope.startSpin();
+        };
+
         $scope.startcounter = 0;
+
         $scope.startSpin = function () {
+            console.log("start spin");
             if (!$scope.spinneractive) {
+                console.log("if block");
                 usSpinnerService.spin('spinner-1');
                 $scope.startcounter++;
             }
         };
 
         $scope.stopSpin = function () {
+            console.log("Stop spinner");
             if ($scope.spinneractive) {
+                console.log("If Block");
                 usSpinnerService.stop('spinner-1');
             }
         };
@@ -34,66 +49,21 @@ angular.module('starter.controllers', [])
             $scope.spinneractive = true;
         });
 
-        // $scope.setup = function () {
-        //     var width = 320;
-        //     var height = 240;
-        //     var topDist = '0px';
-        //     var leftDist = '0px';
-        //
-        //     var video = document.getElementById('webgazerVideoFeed');
-        //     video.style.display = 'block';
-        //     video.style.position = 'absolute';
-        //     video.style.top = topDist;
-        //     video.style.left = leftDist;
-        //     video.width = width;
-        //     video.height = height;
-        //     video.style.margin = '0px';
-        //
-        //     webgazer.params.imgWidth = width;
-        //     webgazer.params.imgHeight = height;
-        //
-        //     var overlay = document.getElementById('overlay');
-        //     overlay.style.position = 'absolute';
-        //     overlay.width = width;
-        //     overlay.height = height;
-        //     overlay.style.top = topDist;
-        //     overlay.style.left = leftDist;
-        //     overlay.style.margin = '0px';
-        //
-        //     document.body.appendChild(overlay);
-        //
-        //     var cl = webgazer.getTracker().clm;
-        //
-        //     function drawLoop() {
-        //         requestAnimFrame(drawLoop);
-        //         overlay.getContext('2d').clearRect(0, 0, width, height);
-        //         if (cl.getCurrentPosition()) {
-        //             cl.draw(overlay);
-        //         }
-        //     }
-        //
-        //     drawLoop();
-        // };
+        $rootScope.$on('us-spinner:stop', function(event, key) {
+            $scope.spinneractive = false;
+        });
 
-        $scope.checkReady = function () {
-            if (webgazer.isReady()) {
-                console.log("running setup");
-                // $scope.setup();
-            } else {
-                console.log("timeout");
-                setTimeout($scope.checkReady, 100);
-            }
-        };
+
 
         $scope.startWebgaze = function () {
             console.log("Start");
-            var averagex = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-            var averagey = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var overallCount = 0;
+            var averagex = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            var averagey = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             var count = 0;
             webgazer
                 .setGazeListener(function (prediction, elapsedTime) {
                     if (prediction) {
-                        //console.log("X : " + prediction.x + ", Y : " + prediction.y);
                         averagex[count] = prediction.x;
                         averagey[count] = prediction.y;
                         count += 1;
@@ -109,16 +79,31 @@ angular.module('starter.controllers', [])
                             var avgX = sumx / averagex.length;
                             var avgY = sumy / averagey.length;
                             console.log("X : " + avgX + ", Y : " + avgY);
+                            if (avgX > 1400 || avgX < 500 || avgY > 700 || avgY < 100) {
+                                console.log("looked too far");
+                            }
                             count = 0;
+                            overallCount++;
                         }
                     }
-                    // console.log(elapsedTime);
+
+                    if (overallCount == 4) {
+                        swal({
+                                title: "No Concussion Detected",
+                                text: "Athlete is safe for physical activity",
+                                type: "info"
+                                //closeOnConfirm: false
+                            },
+                            function () {
+                                webgazer.end();
+                                $scope.stopSpin();
+                            });
+                    }
                 })
                 .begin()
                 .setTracker("clmtrackr")
                 .setRegression("ridge")
                 .showPredictionPoints(true);
-            // $scope.checkReady();
         }
     })
 
@@ -131,6 +116,7 @@ angular.module('starter.controllers', [])
             $scope.id = 0;
             $scope.score = 0;
             $scope.answers = [];
+            $scope.chosenAnswer = "";
             $scope.questions = [
                 {
                     question: "Was the athlete able to recall their location?",
@@ -173,79 +159,49 @@ angular.module('starter.controllers', [])
                     question: "Does the athlete have double vision or have trouble reading?",
                     options: ["Yes", "No"],
                     answer: 1
-                },
-                {
-                    question: "Who invented telephone?",
-                    options: ["Albert Einstein", "Alexander Graham Bell", "Isaac Newton", "Marie Curie"],
-                    answer: 1
                 }
             ];
             $scope.nextQuestion();
         };
 
         $scope.nextQuestion = function () {
-            var $q = false;
             if ($scope.id < $scope.questions.length) {
-                $q = $scope.questions[$scope.id];
-            }
-            if ($q) {
-                $scope.question = $q.question;
-                $scope.options = $q.options;
-                $scope.answer = $q.answer;
+                $scope.question = $scope.questions[$scope.id].question;
+                $scope.options = $scope.questions[$scope.id].options;
+                $scope.answer = $scope.questions[$scope.id].answer;
             } else {
                 $scope.quizOver = true;
                 $scope.calcResults();
             }
+
         };
 
-        $scope.checkAnswer = function () {
-            var ans = $('input[name=answer]:checked').val();
-
-            if (ans) {
-                if (ans != $scope.options[$scope.answer]) {
-                    $scope.score++;
-                }
-                $scope.answers.push(ans);
-                $scope.id++;
-                $scope.nextQuestion();
+        $scope.checkAnswer = function (ans) {
+            console.log(ans);
+            if (ans != $scope.options[$scope.answer]) {
+                $scope.score++;
             }
+            $scope.answers.push(ans);
+            $scope.id++;
+            $scope.nextQuestion();
         };
 
         $scope.calcResults = function () {
             console.log($scope.answers);
             if ($scope.score > 0) {
-                $scope.result = "The athlete has shown at least one symptom. They should stay off the field.\n Take the test to diagnose severity.";
+
+                if ($scope.score == 1) {
+                    $scope.result = "The athlete has shown 1 symptom of concussion. " +
+                        "They should refrain from activity.\n Take the test to diagnose severity.";
+                } else {
+                    $scope.result = "The athlete has shown " + $scope.score + " symptoms of concussion. " +
+                        "They should refrain from activity.\n Take the test to diagnose severity.";
+                }
             } else {
-                $scope.result = "The athlete has not admitted to any symptom. Take the test to verify.";
+                $scope.result = "The athlete has not admitted to any symptoms of concussion. Take the test to verify.";
             }
         };
-    })
-
-
-    .controller('DashCtrl', function ($scope) {
-    })
-
-    .controller('ChatsCtrl', function ($scope, Chats) {
-        // With the new view caching in Ionic, Controllers are only called
-        // when they are recreated or on app start, instead of every page change.
-        // To listen for when this page is active (for example, to refresh data),
-        // listen for the $ionicView.enter event:
-        //
-        //$scope.$on('$ionicView.enter', function(e) {
-        //});
-
-        $scope.chats = Chats.all();
-        $scope.remove = function (chat) {
-            Chats.remove(chat);
-        };
-    })
-
-    .controller('ChatDetailCtrl', function ($scope, $stateParams, Chats) {
-        $scope.chat = Chats.get($stateParams.chatId);
-    })
-
-    .controller('AccountCtrl', function ($scope) {
-        $scope.settings = {
-            enableFriends: true
-        };
     });
+
+
+

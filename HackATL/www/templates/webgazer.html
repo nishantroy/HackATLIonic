@@ -1,12 +1,26 @@
-<ion-view view-title="Eye Test">
+<ion-view view-title="Eye Test" hide-back-button="true">
+    <ion-nav-buttons side="right">
+        <a ui-sref="home">
+            <button class="button button-clear">
+                Home
+            </button>
+        </a>
+    </ion-nav-buttons>
     <ion-content class="padding">
-        <h2>Webgazer</h2>
-        <div ng-controller="WebgazerController">
-            <button class="button button-positive" ng-click="startWebgaze(); startSpin()">START</button>
-            <div align="center">
-                <span us-spinner="{radius:200, width:50, length: 2, lines: 10, speed: 1/20, color: 'purple', opacity: 1/10, trail: 5, corners:100}
-                            " spinner-key="spinner-1">
+        <div class="row">
+
+            <div class="col">
+                <h2>Diagnostic Eye-Test</h2>
+                <div class="col">
+                    <button class="button button-positive" ng-click="startWebgaze(); startSpin()">START</button>
+                    <div align="center" style="margin-top: 40%">
+                        <span us-spinner="{radius:200, width:8, length: 2, lines: 50,
+                        speed: .3, color: 'blue', opacity: 1/10, trail: 5, corners:100}"
+                              spinner-key="spinner-1">
                         </span>
+
+                    </div>
+                </div>
             </div>
         </div>
     </ion-content>

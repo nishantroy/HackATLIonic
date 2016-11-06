@@ -1,6 +1,6 @@
 <!--<div clas="header row text-center">-->
 <!--<div class="container" ng-show="inProgress">-->
-<ion-view view-title="Questionnaire">
+<ion-view view-title="Questionnaire" hide-back-button="true">
     <!--<div class="container">-->
     <!--<div class="row text-center margin-top">-->
     <ion-content class="padding">
@@ -13,35 +13,28 @@
                 <h4 id="question">{{question}}</h4>
 
 
-                <!--<div ng-style="{color: myColor}">-->
                 <div ng-repeat="option in options">
-                    <div>
-                        <input type="radio" name="answer" id="{{option}}" value="{{option}}">
+                    <div class="radioWrapper">
+                        <input type="radio" id="{{option}}" name="answer" ng-model="$parent.chosenAnswer"
+                               ng-value="option" class="customRadio">
                         <label for="{{option}}" class="customRadio">{{option}}</label>
                     </div>
                 </div>
-                <!--</div>-->
-                <!--<li ng-repeat="item in options" ng-class="{'pending-delete': item.checked}">-->
-                <!--&lt;!&ndash;name: {{item.name}}, {{item.title}}&ndash;&gt;-->
-                <!--{{item.ans}}-->
-                <!--<input type="radio" ng-model="item.checked" value="{{item}}" />-->
-                <!--</li>-->
 
-
-                <button class="btn btn-blue-fill" ng-click="checkAnswer()">Submit</button>
+                <button class="button button-balanced" ng-click="checkAnswer(chosenAnswer)">Submit</button>
             </div>
 
             <div ng-show="quizOver">
                 <h4>{{result}}</h4>
+                <h5>Please hold device one foot from face</h5>
+                <img src="./img/instructionpic.jpg"><br>
                 <a ui-sref="webgazer">
-                    <button class="btn btn-primary">
+                    <button class="button button-positive">
                         Take the eye test.
                     </button>
                 </a>
             </div>
         </div>
-        <!--</div>-->
-        <!--</div>-->
     </ion-content>
 </ion-view>
 <!--</div>-->

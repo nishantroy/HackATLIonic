@@ -1,0 +1,13 @@
+<ion-view view-title="Eye Test">
+    <ion-content class="padding">
+        <h2>Webgazer</h2>
+        <div ng-controller="WebgazerController">
+            <button class="button button-positive" ng-click="startWebgaze(); startSpin()">START</button>
+            <div align="center">
+                <span us-spinner="{radius:200, width:50, length: 2, lines: 10, speed: 1/20, color: 'purple', opacity: 1/10, trail: 5, corners:100}
+                            " spinner-key="spinner-1">
+                        </span>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

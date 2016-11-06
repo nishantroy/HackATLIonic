@@ -1,0 +1,48 @@
+<!--<div clas="header row text-center">-->
+<!--<div class="container" ng-show="inProgress">-->
+<ion-view view-title="Questionnaire">
+    <!--<div class="container">-->
+    <!--<div class="row text-center margin-top">-->
+    <ion-content class="padding">
+        <div ng-show="!inProgress">
+            <h2>A few questions...</h2>
+            <button class="button button-positive" ng-click="startQuiz()">Start Quiz</button>
+        </div>
+        <div ng-show="inProgress">
+            <div ng-show="!quizOver">
+                <h4 id="question">{{question}}</h4>
+
+
+                <!--<div ng-style="{color: myColor}">-->
+                <div ng-repeat="option in options">
+                    <div>
+                        <input type="radio" name="answer" id="{{option}}" value="{{option}}">
+                        <label for="{{option}}" class="customRadio">{{option}}</label>
+                    </div>
+                </div>
+                <!--</div>-->
+                <!--<li ng-repeat="item in options" ng-class="{'pending-delete': item.checked}">-->
+                <!--&lt;!&ndash;name: {{item.name}}, {{item.title}}&ndash;&gt;-->
+                <!--{{item.ans}}-->
+                <!--<input type="radio" ng-model="item.checked" value="{{item}}" />-->
+                <!--</li>-->
+
+
+                <button class="btn btn-blue-fill" ng-click="checkAnswer()">Submit</button>
+            </div>
+
+            <div ng-show="quizOver">
+                <h4>{{result}}</h4>
+                <a ui-sref="webgazer">
+                    <button class="btn btn-primary">
+                        Take the eye test.
+                    </button>
+                </a>
+            </div>
+        </div>
+        <!--</div>-->
+        <!--</div>-->
+    </ion-content>
+</ion-view>
+<!--</div>-->
+<!--</div>-->
